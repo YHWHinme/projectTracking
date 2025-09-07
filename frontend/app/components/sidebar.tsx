@@ -1,5 +1,11 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { mockProjects } from "@/app/lib/mockData";
+
 function Sidebar() {
+  const pathname = usePathname();
+
   return (
     <div
       className="fixed top-0 left-0 h-screen w-31 m-0 
@@ -8,22 +14,42 @@ function Sidebar() {
 			bg-white
 			"
     >
-      <NavButton name={"Home"} link={"/"} />
+      <NavButton name={"Home"} link={"/"} isActive={pathname === "/"} />
+      {mockProjects.map((project) => (
+        <NavButton
+          key={project.name}
+          name={project.name}
+          link={`/projects/${project.name.toLowerCase().replace(/ /g, "-")}`}
+          isActive={
+            pathname ===
+            `/projects/${project.name.toLowerCase().replace(/ /g, "-")}`
+          }
+        />
+      ))}
     </div>
   );
 }
 
-function NavButton({ name, link }: { name: string; link: string }) {
+function NavButton({
+  name,
+  link,
+  isActive,
+}: {
+  name: string;
+  link: string;
+  isActive: boolean;
+}) {
   return (
     <Link href={link}>
       <div
-        className="rounded-3xl shadow-xl
+        className={`rounded-3xl shadow-xl
 			flex justify-center
-			bg-white text-black
-			hover:bg-gray-500 group:cursor-pointer
+			text-black
+			hover:bg-gray-500 cursor-pointer
 			p-1 mx-2 my-2
 			transition-all ease-linear duration-300
-			"
+			${isActive ? "bg-gray-300" : "bg-white"}
+			`}
       >
         {name}
       </div>
