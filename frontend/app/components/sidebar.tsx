@@ -1,3 +1,4 @@
+import Link from "next/link";
 function Sidebar() {
   return (
     <div
@@ -7,25 +8,26 @@ function Sidebar() {
 			bg-white
 			"
     >
-      <NavButton name={"Item"} />
-      <NavButton name={"Something"} />
+      <NavButton name={"Home"} link={"/"} />
     </div>
   );
 }
 
-function NavButton({ name }: { name: string }) {
+function NavButton({ name, link }: { name: string; link: string }) {
   return (
-    <div
-      className="rounded-3xl shadow-xl
+    <Link href={link}>
+      <div
+        className="rounded-3xl shadow-xl
 			flex justify-center
 			bg-white text-black
-			hover:bg-gray-500 cursor-pointer
+			hover:bg-gray-500 group:cursor-pointer
 			p-1 mx-2 my-2
 			transition-all ease-linear duration-300
 			"
-    >
-      {name}
-    </div>
+      >
+        {name}
+      </div>
+    </Link>
   );
 }
 
