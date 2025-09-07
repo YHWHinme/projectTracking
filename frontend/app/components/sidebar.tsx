@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { mockProjects } from "@/app/lib/mockData";
+
 
 function Sidebar() {
   const pathname = usePathname();
@@ -15,17 +15,6 @@ function Sidebar() {
 			"
     >
       <NavButton name={"Home"} link={"/"} isActive={pathname === "/"} />
-      {mockProjects.map((project) => (
-        <NavButton
-          key={project.name}
-          name={project.name}
-          link={`/projects/${project.name.toLowerCase().replace(/ /g, "-")}`}
-          isActive={
-            pathname ===
-            `/projects/${project.name.toLowerCase().replace(/ /g, "-")}`
-          }
-        />
-      ))}
     </div>
   );
 }
