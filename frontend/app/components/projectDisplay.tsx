@@ -2,11 +2,16 @@ import React from "react";
 import Link from "next/link";
 import { Project, Task } from "@/app/lib/types";
 import { mockProjects } from "@/app/lib/mockData";
+import AddTaskForm from "./addTask";
 
 const ProjectDisplay: React.FC = () => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">My Projects</h1>
+
+      <div className="flex items-center">
+        <AddTaskForm />
+      </div>
       {/* Iterates over the mockProjects array to display each project's details.
       For each project, it prepares data and renders a clickable link. */}
       {mockProjects.map((project: Project) => {
@@ -25,32 +30,6 @@ const ProjectDisplay: React.FC = () => {
                 {project.tasks.length} tasks • {completedTasks} completed
               </p>
               <ul>
-                {/* Displays up to the first three tasks for the project as a 
-                preview. */}
-                {project.tasks.slice(0, 3).map((task: Task, index: number) => (
-                  <li key={index} className="flex items-center mb-1 opacity-75">
-                    <input
-                      type="checkbox"
-                      checked={task.completed}
-                      readOnly
-                      className="mr-2"
-                    />
-                    <span
-                      className={`${task.completed ? "line-through text-gray-500" : ""}`}
-                    >
-                      {task.title}
-                    </span>
-                    <span
-                      className={`ml-2 px-2 py-0.5 rounded-full text-xs
-                        ${task.priority === "high" ? "bg-red-200 text-red-800" : ""}
-                        ${task.priority === "medium" ? "bg-yellow-200 text-yellow-800" : ""}
-                        ${task.priority === "low" ? "bg-green-200 text-green-800" : ""}
-                      `}
-                    >
-                      {task.priority}
-                    </span>
-                  </li>
-                ))}
                 {/* // Conditionally renders a message if there are more than 3 
                 tasks, indicating how many more. */}
                 {project.tasks.length > 3 && (
