@@ -15,20 +15,45 @@ function ProjectHeader({ name, progress }: { name: string; progress: number }) {
   );
 }
 
-function TaskFilters({ filter, onFilterChange, sortBy, onSortChange }: any) {
+interface TaskFiltersProps {
+  filter: string;
+  onFilterChange: (filter: string) => void;
+  sortBy: string;
+  onSortChange: (sortBy: string) => void;
+}
+
+function TaskFilters({
+  filter,
+  onFilterChange,
+  sortBy,
+  onSortChange,
+}: TaskFiltersProps) {
   return (
     <div className="flex justify-center space-x-4 my-4">
       <div>
         <label htmlFor="filter">Filter:</label>
-        <select id="filter" value={filter} onChange={(e) => onFilterChange(e.target.value)} className="ml-2 p-1 border rounded">
+        <select
+          id="filter"
+          value={filter}
+          onChange={(e) => onFilterChange(e.target.value)}
+          className="ml-2 p-1 border rounded"
+        >
           <option value="all">All Tasks</option>
           <option value="pending">Pending</option>
           <option value="completed">Completed</option>
+          <option value="high">High Priority</option>
+          <option value="medium">Medium Priority</option>
+          <option value="low">Low Priority</option>
         </select>
       </div>
       <div>
         <label htmlFor="sortBy">Sort by:</label>
-        <select id="sortBy" value={sortBy} onChange={(e) => onSortChange(e.target.value)} className="ml-2 p-1 border rounded">
+        <select
+          id="sortBy"
+          value={sortBy}
+          onChange={(e) => onSortChange(e.target.value)}
+          className="ml-2 p-1 border rounded"
+        >
           <option value="priority">Priority</option>
         </select>
       </div>
@@ -36,10 +61,20 @@ function TaskFilters({ filter, onFilterChange, sortBy, onSortChange }: any) {
   );
 }
 
-function TaskItem({ task, onUpdate, onDelete }: { task: Task; onUpdate: (task: Task) => void; onDelete: (taskTitle: string) => void }) {
+function TaskItem({
+  task,
+  onUpdate,
+  onDelete,
+}: {
+  task: Task;
+  onUpdate: (task: Task) => void;
+  onDelete: (taskTitle: string) => void;
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
-  const [editPriority, setEditPriority] = useState<Task['priority']>(task.priority);
+  const [editPriority, setEditPriority] = useState<Task["priority"]>(
+    task.priority,
+  );
 
   const handleToggleComplete = () => {
     onUpdate({ ...task, completed: !task.completed });
@@ -53,32 +88,42 @@ function TaskItem({ task, onUpdate, onDelete }: { task: Task; onUpdate: (task: T
   };
 
   const handleDelete = () => {
-    if (confirm('Delete this task?')) {
+    if (confirm("Delete this task?")) {
       onDelete(task.title);
     }
   };
 
   return (
-    <div className={`flex items-center justify-between p-2 my-1 border rounded ${task.completed ? 'bg-green-100' : 'bg-white'}`}>
-      <input type="checkbox" checked={task.completed} onChange={handleToggleComplete} className="mr-2" />
-      
+    <div
+      className={`flex items-center justify-between p-2 my-1 border rounded ${task.completed ? "bg-green-100" : "bg-white"}`}
+    >
+      <input
+        type="checkbox"
+        checked={task.completed}
+        onChange={handleToggleComplete}
+        className="mr-2"
+      />
+
       {isEditing ? (
-        <input 
-          value={editTitle} 
-          onChange={(e) => setEditTitle(e.target.value)} 
+        <input
+          value={editTitle}
+          onChange={(e) => setEditTitle(e.target.value)}
           onBlur={handleSaveEdit}
-          onKeyPress={(e) => e.key === 'Enter' && handleSaveEdit()}
+          onKeyPress={(e) => e.key === "Enter" && handleSaveEdit()}
           className="flex-grow p-1 border rounded"
         />
       ) : (
-        <span onClick={() => setIsEditing(true)} className={`flex-grow cursor-pointer ${task.completed ? 'line-through' : ''}`}>
+        <span
+          onClick={() => setIsEditing(true)}
+          className={`flex-grow cursor-pointer ${task.completed ? "line-through" : ""}`}
+        >
           {task.title}
         </span>
       )}
-      
-      <select 
-        value={editPriority} 
-        onChange={(e) => setEditPriority(e.target.value as Task['priority'])} 
+
+      <select
+        value={editPriority}
+        onChange={(e) => setEditPriority(e.target.value as Task["priority"])}
         disabled={!isEditing}
         className="ml-2 p-1 border rounded"
       >
@@ -86,30 +131,53 @@ function TaskItem({ task, onUpdate, onDelete }: { task: Task; onUpdate: (task: T
         <option value="medium">Medium</option>
         <option value="low">Low</option>
       </select>
-      
+
       {isEditing ? (
-        <button onClick={handleSaveEdit} className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Save</button>
+        <button
+          onClick={handleSaveEdit}
+          className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Save
+        </button>
       ) : (
-        <button onClick={() => setIsEditing(true)} className="ml-2 px-3 py-1 bg-gray-300 text-black rounded hover:bg-gray-400">Edit</button>
+        <button
+          onClick={() => setIsEditing(true)}
+          className="ml-2 px-3 py-1 bg-gray-300 text-black rounded hover:bg-gray-400"
+        >
+          Edit
+        </button>
       )}
-      
-      <button onClick={handleDelete} className="ml-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
+
+      <button
+        onClick={handleDelete}
+        className="ml-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+      >
+        Delete
+      </button>
     </div>
   );
 }
 
-function TaskList({ tasks, onUpdate, onDelete }: { tasks: Task[]; onUpdate: (task: Task) => void; onDelete: (taskTitle: string) => void }) {
+function TaskList({
+  tasks,
+  onUpdate,
+  onDelete,
+}: {
+  tasks: Task[];
+  onUpdate: (task: Task) => void;
+  onDelete: (taskTitle: string) => void;
+}) {
   return (
     <div className="max-w-2xl mx-auto mt-4">
       {tasks.length === 0 ? (
         <p className="text-center text-gray-500">No tasks found.</p>
       ) : (
-        tasks.map(task => (
-          <TaskItem 
-            key={task.title} 
-            task={task} 
-            onUpdate={onUpdate} 
-            onDelete={onDelete} 
+        tasks.map((task) => (
+          <TaskItem
+            key={task.title}
+            task={task}
+            onUpdate={onUpdate}
+            onDelete={onDelete}
           />
         ))
       )}
@@ -117,38 +185,88 @@ function TaskList({ tasks, onUpdate, onDelete }: { tasks: Task[]; onUpdate: (tas
   );
 }
 
-
-export default function ProjectPage({ params }: { params: { projectName: string } }) {
-  const projectName = decodeURIComponent(params.projectName);
+export default function ProjectPage({
+  params,
+}: {
+  params: { projectName: string };
+}) {
+  // Call hooks first, before any conditional logic
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [filter, setFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('priority');
+  const [filter, setFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("priority");
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Safely decode project name from URL
+  let projectName: string | null = null;
+  if (params && params.projectName && typeof params.projectName === "string") {
+    try {
+      const decoded = decodeURIComponent(params.projectName);
+      if (decoded.trim()) {
+        projectName = decoded;
+      }
+    } catch (error) {
+      console.error("Error decoding project name:", error);
+    }
+  }
+
+  // Use effect to load project tasks - only run if projectName is valid
   useEffect(() => {
-    const project = mockProjects.find((p: Project) => p.name === projectName);
-    if (project) {
-      setTasks(project.tasks);
+    if (!projectName) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const project = mockProjects.find((p: Project) => p.name === projectName);
+      if (project) {
+        setTasks(project.tasks);
+      } else {
+        console.error(`Project not found: "${projectName}"`);
+        console.log(
+          "Available projects:",
+          mockProjects.map((p) => p.name),
+        );
+      }
+    } catch (error) {
+      console.error("Error loading tasks:", error);
+    } finally {
+      setIsLoading(false);
     }
   }, [projectName]);
 
+  // Handle invalid project name
+  if (!projectName) {
+    return <div className="p-4 text-red-500">Error: Invalid project name</div>;
+  }
+
   const handleTaskCreate = (taskTitle: string, assignedProjectName: string) => {
     if (assignedProjectName === projectName) {
-      const newTask: Task = { title: taskTitle, completed: false, priority: 'medium' }; // Default priority
-      setTasks(prevTasks => [...prevTasks, newTask]);
+      const newTask: Task = {
+        title: taskTitle,
+        completed: false,
+        priority: "medium",
+      }; // Default priority
+      setTasks((prevTasks) => [...prevTasks, newTask]);
     } else {
-      alert(`Task "${taskTitle}" will be added to "${assignedProjectName}". This page only displays tasks for "${projectName}".`);
+      alert(
+        `Task "${taskTitle}" will be added to "${assignedProjectName}". This page only displays tasks for "${projectName}".`,
+      );
       // In a real app, you'd update the mockProjects array or a global state here
     }
   };
 
   const handleTaskUpdate = (updatedTask: Task) => {
-    setTasks(prevTasks => prevTasks.map(task => 
-      task.title === updatedTask.title ? updatedTask : task
-    ));
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.title === updatedTask.title ? updatedTask : task,
+      ),
+    );
   };
 
   const handleTaskDelete = (taskTitle: string) => {
-    setTasks(prevTasks => prevTasks.filter(task => task.title !== taskTitle));
+    setTasks((prevTasks) =>
+      prevTasks.filter((task) => task.title !== taskTitle),
+    );
   };
 
   const filteredTasks = filterTasks(tasks, filter, sortBy);
@@ -158,9 +276,28 @@ export default function ProjectPage({ params }: { params: { projectName: string 
     <div className="container mx-auto p-4">
       <ProjectHeader name={projectName} progress={progress} />
       <AddTaskForm onTaskCreate={handleTaskCreate} />
-      <TaskFilters filter={filter} onFilterChange={setFilter} sortBy={sortBy} onSortChange={setSortBy} />
-      <TaskList tasks={filteredTasks} onUpdate={handleTaskUpdate} onDelete={handleTaskDelete} />
+      <TaskFilters
+        filter={filter}
+        onFilterChange={setFilter}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+      />
+      {/* Progress bar */}
+      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+        <div
+          className="bg-green-500 h-2.5 rounded-full"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+      {isLoading ? (
+        <p>Loading tasks...</p>
+      ) : (
+        <TaskList
+          tasks={filteredTasks}
+          onUpdate={handleTaskUpdate}
+          onDelete={handleTaskDelete}
+        />
+      )}
     </div>
   );
 }
-

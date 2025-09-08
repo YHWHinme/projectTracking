@@ -7,6 +7,12 @@ export function filterTasks(tasks: Task[], filter: string, sortBy: string): Task
     filtered = tasks.filter(task => task.completed);
   } else if (filter === 'pending') {
     filtered = tasks.filter(task => !task.completed);
+  } else if (filter === 'high') {
+    filtered = tasks.filter(task => task.priority === 'high');
+  } else if (filter === 'medium') {
+    filtered = tasks.filter(task => task.priority === 'medium');
+  } else if (filter === 'low') {
+    filtered = tasks.filter(task => task.priority === 'low');
   }
   
   if (sortBy === 'priority') {

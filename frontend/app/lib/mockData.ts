@@ -1,4 +1,6 @@
-export const mockProjects = [
+import type { Project } from "./types";
+
+export const mockProjects: Project[] = [
   {
     name: "Work Projects",
     tasks: [
