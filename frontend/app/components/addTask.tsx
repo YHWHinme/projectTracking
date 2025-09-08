@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { mockProjects} from "@/lib/mockData";
+import { mockProjects } from "@/lib/mockData";
 import type { Project } from "@/lib/types";
 
 interface AddTaskFormProps {
@@ -10,7 +10,7 @@ interface AddTaskFormProps {
 function AddTaskForm({ onTaskCreate }: AddTaskFormProps) {
   const [taskTitle, setTaskTitle] = useState("");
   const [selectedProject, setSelectedProject] = useState(
-    mockProjects.length > 0 ? mockProjects[0].name : ""
+    mockProjects.length > 0 ? mockProjects[0].name : "",
   );
 
   function handleTaskTitleChange(event: React.ChangeEvent<HTMLInputElement>) {
