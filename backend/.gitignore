@@ -1,0 +1,9 @@
+
+# Ignoring envs
+*.env
+.env
+
+# Ignoring things to do with npm
+node_modules/
+pnpm-lock.yaml
+
