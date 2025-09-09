@@ -1,16 +1,34 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Link from "next/link";
-import { Project } from "@/app/lib/types";
+import { Project, Task } from "@/app/lib/types";
 import { mockProjects } from "@/app/lib/mockData";
+import ProjectCreateForm from "./projectCreateForm";
 
 const ProjectDisplay: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>(mockProjects);
+
+  const handleProjectCreate = (projectName: string) => {
+    const newProject: Project = {
+      name: projectName,
+      tasks: [] as Task[],
+    };
+    mockProjects.push(newProject);
+    setProjects([...mockProjects]);
+  };
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">My Projects</h1>
 
-      {/* Iterates over the mockProjects array to display each project's details.
+      <ProjectCreateForm
+        onProjectCreate={handleProjectCreate}
+        existingProjects={projects.map(p => p.name)}
+      />
+
+      {/* Iterates over the projects array to display each project's details.
       For each project, it prepares data and renders a clickable link. */}
-      {mockProjects.map((project: Project) => {
+      {projects.map((project: Project) => {
         const projectSlug = encodeURIComponent(project.name);
         // Calculates the number of completed tasks for the current project.
         const completedTasks = project.tasks.filter(

@@ -1,40 +1,32 @@
 "use client";
 import { useState } from "react";
-import { mockProjects } from "@/lib/mockData";
-import type { Project } from "@/lib/types";
 
 interface AddTaskFormProps {
   onTaskCreate: (taskTitle: string, projectName: string) => void;
+  currentProjectName: string;
 }
 
-function AddTaskForm({ onTaskCreate }: AddTaskFormProps) {
+function AddTaskForm({ onTaskCreate, currentProjectName }: AddTaskFormProps) {
   const [taskTitle, setTaskTitle] = useState("");
-  const [selectedProject, setSelectedProject] = useState(
-    mockProjects.length > 0 ? mockProjects[0].name : "",
-  );
 
   function handleTaskTitleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setTaskTitle(event.target.value);
   }
 
-  function handleProjectChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSelectedProject(event.target.value);
-  }
-
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (taskTitle.trim() && selectedProject) {
-      onTaskCreate(taskTitle.trim(), selectedProject);
+    if (taskTitle.trim()) {
+      onTaskCreate(taskTitle.trim(), currentProjectName);
       setTaskTitle("");
     } else {
-      alert("Please enter a task and select a project.");
+      alert("Please enter a task title.");
     }
   }
 
   return (
     <div
       className="
-			flex justify-center items-center
+			flex justify-center 
 			mx-10 my-1 p-1
 			border-1 rounded-2xl
 			bg-white
@@ -59,28 +51,7 @@ function AddTaskForm({ onTaskCreate }: AddTaskFormProps) {
           placeholder="Input your task!"
         />
       </div>
-      {/* Dropdown for projects */}
-      <div
-        className="border-1 rounded-2xl
-				mx-2
-				flex
-			"
-      >
-        <select
-          className="
-					text-center
-					py-1
-					"
-          onChange={handleProjectChange}
-          value={selectedProject}
-        >
-          {mockProjects.map((project: Project) => (
-            <option key={project.name} value={project.name}>
-              {project.name}
-            </option>
-          ))}
-        </select>
-      </div>
+
       {/* The button to submit it */}
       <button
         type="submit"

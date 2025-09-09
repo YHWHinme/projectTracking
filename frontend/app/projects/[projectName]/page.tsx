@@ -275,7 +275,7 @@ export default function ProjectPage({
   return (
     <div className="container mx-auto p-4">
       <ProjectHeader name={projectName} progress={progress} />
-      <AddTaskForm onTaskCreate={handleTaskCreate} />
+      <AddTaskForm onTaskCreate={handleTaskCreate} currentProjectName={projectName} />
       <TaskFilters
         filter={filter}
         onFilterChange={setFilter}
