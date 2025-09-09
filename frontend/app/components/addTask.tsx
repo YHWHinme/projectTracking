@@ -34,8 +34,8 @@ function AddTaskForm({ onTaskCreate }: AddTaskFormProps) {
   return (
     <div
       className="
-			flex justify-center items-center w-full
-			mx-100 my-1 p-1
+			flex justify-center items-center
+			mx-10 my-1 p-1
 			border-1 rounded-2xl
 			bg-white
 			"
