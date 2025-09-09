@@ -1,9 +1,9 @@
 "use client";
-import { useState, useEffect } from "react";
-import { mockProjects } from "@/lib/mockData";
-import type { Task, Project } from "@/lib/types";
+import { useState } from "react";
+import type { Task } from "@/lib/types";
 import AddTaskForm from "@/app/components/addTask";
 import { filterTasks, calculateProgress } from "@/app/lib/taskUtils";
+import { useProjects } from "@/lib/ProjectContext";
 
 // Placeholder components for now
 function ProjectHeader({ name, progress }: { name: string; progress: number }) {
@@ -191,10 +191,9 @@ export default function ProjectPage({
   params: { projectName: string };
 }) {
   // Call hooks first, before any conditional logic
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const { state, actions } = useProjects();
   const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState("priority");
-  const [isLoading, setIsLoading] = useState(true);
 
   // Safely decode project name from URL
   let projectName: string | null = null;
@@ -209,66 +208,53 @@ export default function ProjectPage({
     }
   }
 
-  // Use effect to load project tasks - only run if projectName is valid
-  useEffect(() => {
-    if (!projectName) {
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const project = mockProjects.find((p: Project) => p.name === projectName);
-      if (project) {
-        setTasks(project.tasks);
-      } else {
-        console.error(`Project not found: "${projectName}"`);
-        console.log(
-          "Available projects:",
-          mockProjects.map((p) => p.name),
-        );
-      }
-    } catch (error) {
-      console.error("Error loading tasks:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [projectName]);
+  // Get project from global state
+  const project = projectName ? actions.getProject(projectName) : undefined;
+  const tasks = project?.tasks || [];
 
   // Handle invalid project name
   if (!projectName) {
     return <div className="p-4 text-red-500">Error: Invalid project name</div>;
   }
 
+  // Handle project not found
+  if (!project) {
+    return <div className="p-4 text-red-500">Error: Project &quot;{projectName}&quot; not found</div>;
+  }
+
+  // Define all handler functions
   const handleTaskCreate = (taskTitle: string, assignedProjectName: string) => {
     if (assignedProjectName === projectName) {
       const newTask: Task = {
         title: taskTitle,
         completed: false,
         priority: "medium",
-      }; // Default priority
-      setTasks((prevTasks) => [...prevTasks, newTask]);
+      };
+      actions.addTask(assignedProjectName, newTask);
     } else {
       alert(
         `Task "${taskTitle}" will be added to "${assignedProjectName}". This page only displays tasks for "${projectName}".`,
       );
-      // In a real app, you'd update the mockProjects array or a global state here
     }
   };
 
   const handleTaskUpdate = (updatedTask: Task) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.title === updatedTask.title ? updatedTask : task,
-      ),
-    );
+    if (projectName) {
+      // Find the old task to get its original title
+      const oldTask = tasks.find(task => task.title === updatedTask.title);
+      if (oldTask) {
+        actions.updateTask(projectName, oldTask.title, updatedTask);
+      }
+    }
   };
 
   const handleTaskDelete = (taskTitle: string) => {
-    setTasks((prevTasks) =>
-      prevTasks.filter((task) => task.title !== taskTitle),
-    );
+    if (projectName) {
+      actions.deleteTask(projectName, taskTitle);
+    }
   };
 
+  // Calculate derived values
   const filteredTasks = filterTasks(tasks, filter, sortBy);
   const progress = calculateProgress(tasks);
 
@@ -289,7 +275,7 @@ export default function ProjectPage({
           style={{ width: `${progress}%` }}
         ></div>
       </div>
-      {isLoading ? (
+      {state.isLoading ? (
         <p>Loading tasks...</p>
       ) : (
         <TaskList

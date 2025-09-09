@@ -1,20 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { Project, Task } from "@/app/lib/types";
-import { mockProjects } from "@/app/lib/mockData";
+import { Project } from "@/app/lib/types";
 import ProjectCreateForm from "./projectCreateForm";
+import { useProjects } from "@/app/lib/ProjectContext";
 
 const ProjectDisplay: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>(mockProjects);
+  const { state, actions } = useProjects();
 
   const handleProjectCreate = (projectName: string) => {
-    const newProject: Project = {
-      name: projectName,
-      tasks: [] as Task[],
-    };
-    mockProjects.push(newProject);
-    setProjects([...mockProjects]);
+    actions.addProject(projectName);
   };
 
   return (
@@ -23,12 +18,12 @@ const ProjectDisplay: React.FC = () => {
 
       <ProjectCreateForm
         onProjectCreate={handleProjectCreate}
-        existingProjects={projects.map(p => p.name)}
+        existingProjects={state.projects.map(p => p.name)}
       />
 
       {/* Iterates over the projects array to display each project's details.
       For each project, it prepares data and renders a clickable link. */}
-      {projects.map((project: Project) => {
+      {state.projects.map((project: Project) => {
         const projectSlug = encodeURIComponent(project.name);
         // Calculates the number of completed tasks for the current project.
         const completedTasks = project.tasks.filter(
